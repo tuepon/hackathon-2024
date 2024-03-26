@@ -1,0 +1,39 @@
+import { useState, useEffect } from 'react';
+import axios from "axios";
+import ImageList from './ImageList';
+// import './App.css';
+
+const App = () => {
+  const [ recipes, setRecipes ] = useState([]);
+  const [ query, setQuery ] = useState('');
+
+  useEffect(() => {
+    const getRecipe = async () => {
+      if (!query) return;
+      const APP_ID = import.meta.env.VITE_EDAMAM_API_ID;
+      const APP_KEY = import.meta.env.VITE_EDAMAM_API_KEY;
+      const response = await axios.get(`https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`);
+      setRecipes(response.data.hits);
+      // console.log(response.data.hits);
+    }
+    getRecipe();
+}, [query]);
+
+  const handleSearch = () => {
+    setQuery(document.getElementById('searchInput').value);
+  };
+  
+  return (
+    <>
+    <h1>My Recipe</h1>
+      <div>
+        <input id="searchInput" type="text" />
+        <button onClick={handleSearch}>Search</button>
+      </div>
+
+      <ImageList recipes={recipes} />
+    </>
+  )
+};
+
+export default App;
